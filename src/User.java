@@ -16,5 +16,7 @@ public class User {
     public ImageIcon getImage(){
         return img;
     }
+
+
 }
 
