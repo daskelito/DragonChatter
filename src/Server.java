@@ -6,18 +6,20 @@ import java.net.Socket;
 
 public class Server extends Thread {
     private ServerSocket serverSocket;
+    private ClientList clientlist;
 
     public Server(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         this.start();
-        System.out.println("Server started on port " + port);
+        System.out.println("Server: Server started on port " + port);
+        clientlist = new ClientList();
     }
 
     public void run() {
         while (true) {
             try {
                 Socket socket = serverSocket.accept();
-                System.out.println("Client connection detected, initiating handler...");
+                System.out.println("Server: Client connection detected, initiating handler...");
                 new ClientHandler(socket);
             } catch (IOException e) {
                 System.err.println(e);
@@ -32,7 +34,7 @@ public class Server extends Thread {
 
         public ClientHandler(Socket socket) throws IOException {
             this.socket = socket;
-            System.out.println("Handler and socket established.");
+            System.out.println("Server: Handler and socket established.");
             ois = new ObjectInputStream(socket.getInputStream());
             oos = new ObjectOutputStream(socket.getOutputStream());
             start();
@@ -40,8 +42,9 @@ public class Server extends Thread {
 
         public void run() {
             try {
-                while (!interrupted()) {
+                while (true) {
                     Message message = (Message) ois.readObject();
+                    System.out.println(message.getText());
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();

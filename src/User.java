@@ -1,12 +1,13 @@
 import javax.swing.*;
+import java.io.Serializable;
 
-public class User {
+public class User implements Serializable {
     private String name;
-    private ImageIcon img;
+    private ImageIcon imgage;
 
-    public User(String name, ImageIcon img){
+    public User(String name, ImageIcon imgage){
         this.name = name;
-        this.img = img;
+        this.imgage = imgage;
     }
 
     public String getName(){
@@ -14,9 +15,18 @@ public class User {
     }
 
     public ImageIcon getImage(){
-        return img;
+        return imgage;
     }
 
+    public int hashCode(){
+        return name.hashCode();
+    }
 
+    public boolean equals(Object obj){
+        if(obj!=null && obj instanceof User){
+            return name.equals(((User)obj).getName());
+        }
+        return false;
+    }
 }
 
