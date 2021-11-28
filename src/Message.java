@@ -1,9 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Message {
+public class Message implements Serializable {
     String text;
     ImageIcon img;
     Date timestamp;
@@ -22,23 +23,23 @@ public class Message {
         this.text = text;
     }
 
-    public Message(ImageIcon img){
+    public Message(ImageIcon img) {
         this.img = img;
     }
 
-    public void setText(String text){
+    public void setText(String text) {
         this.text = text;
     }
 
-    public String getText(){
+    public String getText() {
         return text;
     }
 
-    public void setImg(ImageIcon img){
+    public void setImg(ImageIcon img) {
         this.img = img;
     }
 
-    public ImageIcon getImg(){
+    public ImageIcon getImg() {
         return img;
     }
 }

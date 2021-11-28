@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,7 +15,7 @@ public class Client extends Thread{
 
     public Client(int port) throws IOException {
         scanner = new Scanner(System.in);
-        //gatherInfo();
+        gatherInfo();
         connect(port);
     }
 
@@ -29,15 +28,19 @@ public class Client extends Thread{
     }
 
     public void connect(int port) throws IOException {
-        socket = new Socket("localhost", port);
         start();
         System.out.println("Client: Client connected.");
     }
 
     public void run(){
+
         try {
-            ois = new ObjectInputStream(socket.getInputStream());
+            socket = new Socket("localhost", 888);
             oos = new ObjectOutputStream(socket.getOutputStream());
+            ois = new ObjectInputStream(socket.getInputStream());
+
+            new Listener(ois);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -49,11 +52,46 @@ public class Client extends Thread{
             System.out.println("Client: Message Entered");
             try {
                 oos.writeObject(msg);
+                oos.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
+
+    private class Listener extends Thread {
+        private Socket socket;
+        private ObjectInputStream ois;
+
+        private Listener(ObjectInputStream ois) throws IOException  {
+            this.ois = ois;
+            start();
+        }
+
+        public void run() {
+            try {
+                //ois = new ObjectInputStream(socket.getInputStream());
+                while (true) {
+                    String request = (String) ois.readObject();
+                    if (request.startsWith("/server")){
+                        String cmd = request.split("/")[2];
+                        System.out.println("incoming command: " + cmd);
+
+                        if (cmd.equals("get_info")){
+                            System.out.println("IbnasdksdNFO");
+                            oos.writeObject(currentUser);
+                        }
+
+                        // do stuff with request
+                        //if (request.equals(""))
+                    }
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public void printContacts(){
 

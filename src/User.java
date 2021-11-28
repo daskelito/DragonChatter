@@ -1,13 +1,14 @@
 import javax.swing.*;
 import java.io.Serializable;
 
+
 public class User implements Serializable {
     private String name;
-    private ImageIcon imgage;
+    private ImageIcon image;
 
-    public User(String name, ImageIcon imgage){
+    public User(String name, ImageIcon image){
         this.name = name;
-        this.imgage = imgage;
+        this.image = image;
     }
 
     public String getName(){
@@ -15,7 +16,7 @@ public class User implements Serializable {
     }
 
     public ImageIcon getImage(){
-        return imgage;
+        return image;
     }
 
     public int hashCode(){
