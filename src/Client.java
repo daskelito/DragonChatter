@@ -1,8 +1,7 @@
 import javax.swing.*;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client extends Thread{
@@ -11,20 +10,32 @@ public class Client extends Thread{
     private ObjectOutputStream oos;
     private User currentUser;
     private Scanner scanner;
-
+    private ArrayList<String> contactList;
 
     public Client(int port) throws IOException {
         scanner = new Scanner(System.in);
         gatherInfo();
         connect(port);
+        contactList = new ArrayList<>();
     }
 
     public void gatherInfo(){
         System.out.println("Enter name.");
         String name = scanner.nextLine();
-        ImageIcon image = new ImageIcon("G:\\Dokument\\Uni2020\\Pågående\\OPTOD\\Data\\Images\\carrot.png");
+        ImageIcon image = new ImageIcon("carrot.png");
         currentUser = new User(name, image);
         System.out.println("User created with name '" + name + "' and image 'carrot.png'");
+    }
+
+    public ArrayList<String> getContactList(){
+        return contactList;
+    }
+
+    public void readContacts(String path) throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File(path));
+        while(scanner.hasNextLine()){
+            contactList.add(scanner.nextLine());
+        }
     }
 
     public void connect(int port) throws IOException {
@@ -44,6 +55,7 @@ public class Client extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
         while(true){
             System.out.println("Client: enter a message");
