@@ -7,8 +7,8 @@ public class Main {
 
        //Server server = new Server(888);
        //Client client1 = new Client(888);
-        GUItest gui = new GUItest();
-        //ClientGUI cgui = new ClientGUI("asdf");
+       GUItest gui = new GUItest();
+       //ClientGUI cgui = new ClientGUI("asdf");
 
 
 
