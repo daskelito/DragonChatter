@@ -70,7 +70,7 @@ public class Server extends Thread {
                 // TODO check if user already exists
                 User user = (User) ois.readObject();
                 clientlist.put(user, this);
-                System.out.println("fittan connectade " + user.getName());
+                System.out.println("fittan connectade ");
 
                 while (true) {
                     Message message = (Message) ois.readObject();

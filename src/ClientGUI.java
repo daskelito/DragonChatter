@@ -17,6 +17,7 @@ public class ClientGUI {
     private JPanel onlineListPanel;
     private JPanel contactsListPanel;
     private ImageIcon userPicture;
+    private JLabel userPic;
     private String username;
     private ArrayList<JCheckBox> onlineList;
     private ArrayList<JCheckBox> contactList;
@@ -26,12 +27,13 @@ public class ClientGUI {
         this.client = client;
         onlineList = new ArrayList<>();
         contactList = new ArrayList<>();
+        userPicture = new ImageIcon("C:\\Users\\Dragon\\IdeaProjects\\DragonChatter\\default.png");
 
         frame = new JFrame("DragonChatter");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 600);
+        frame.setSize(1150, 600);
         frame.setLayout(new BorderLayout());
-        frame.setResizable(false);
+        //frame.setResizable(false);
         frame.setLocationRelativeTo(null);
 
         JPanel leftPanel = new JPanel(new BorderLayout());
@@ -51,14 +53,17 @@ public class ClientGUI {
         JTextArea textArea2 = new JTextArea(5, 40);
         textArea2.setLineWrap(true);
         JButton sendButton = new JButton("Send");
-        JButton addPicButton = new JButton("add picture");
-        sendButton.addActionListener(e -> System.out.println("send"));
-        addPicButton.addActionListener(e -> System.out.println("add pic"));
+        JButton addPicButton = new JButton("Attach picture");
+        JButton addContactsButton = new JButton(("Add contacts"));
+        Image resizedUserPic = userPicture.getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
+        userPic = new JLabel(new ImageIcon(resizedUserPic));
 
-
+        lowerTextPanel.add(userPic);
         lowerTextPanel.add(textArea2);
         lowerTextPanel.add(sendButton);
         lowerTextPanel.add(addPicButton);
+        lowerTextPanel.add(addContactsButton);
+
         leftPanel.add(lowerTextPanel, BorderLayout.PAGE_END);
 
         //Online list
@@ -73,10 +78,13 @@ public class ClientGUI {
         contactsListPanel.add(contactTitle);
         rightPanel.add(contactsListPanel);
 
-        addOnline("theo");
-        addOnline("hora");
+        addOnline("example1");
+        addOnline("example2");
+        addOnline("example3");
+        addOnline("example4");
+        addOnline("example5");
 
-        System.out.println(getListofOnlineReceivers().get(0));
+
 
         //login frame
         JFrame loginframe = new JFrame("Login");
@@ -99,6 +107,7 @@ public class ClientGUI {
 
 
         //Actionlisteners for buttons
+        //Login button
         loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frame.setVisible(false);
@@ -107,9 +116,11 @@ public class ClientGUI {
                 frame.setTitle("DragonChatter - User: " + username);
                 frame.setVisible(true);
                 System.out.println("Client logged in with username: " + username);
+                client.setCurrentUser(new User(username, userPicture));
             }
         });
 
+        //Set picture button
         setPicButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser("C:/Users/Dragon/IdeaProjects/DragonChatter");
@@ -118,6 +129,8 @@ public class ClientGUI {
                     File selectedFile = fileChooser.getSelectedFile();
                     try {
                         userPicture = new ImageIcon(ImageIO.read(selectedFile));
+                        Image resizedUserPic = userPicture.getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
+                        userPic.setIcon(new ImageIcon(resizedUserPic));
                     } catch (IOException ioException) {
                         ioException.printStackTrace();
                     }
@@ -125,15 +138,38 @@ public class ClientGUI {
             }
         });
 
+        //Add contacts button
+        addContactsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for(JCheckBox obox : onlineList){
+                    if(obox.isSelected()){
+                        boolean willAdd = true;
+                        for(JCheckBox cbox : contactList){
+                            if(obox.getName() == cbox.getName()){
+                                willAdd = false;
+                            }
+                        }
+                        if(willAdd) addContact(obox.getName());
+                        //TODO add contact to user model wise as well
+                    }
+                }
+                contactsListPanel.repaint();
+                SwingUtilities.updateComponentTreeUI(frame);
+            }
+        });
+
     }
 
+    //TODO check for uniqueness
     public void addContact(String title) {
         JCheckBox newBox = new JCheckBox(title);
         newBox.setName(title);
-        onlineList.add(newBox);
+        contactList.add(newBox);
         contactsListPanel.add(newBox);
     }
 
+
+    //TODO check for uniqueness
     public void addOnline(String title) {
         JCheckBox newBox = new JCheckBox(title);
         newBox.setName(title);

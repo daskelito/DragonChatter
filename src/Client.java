@@ -24,6 +24,13 @@ public class Client extends Thread{
         }
     }
 
+
+
+    public void connect(int port) throws IOException {
+        start();
+        System.out.println("Client: Client connected.");
+    }
+
     public ArrayList<String> getContactList(){
         return contactList;
     }
@@ -35,9 +42,13 @@ public class Client extends Thread{
         }
     }
 
-    public void connect(int port) throws IOException {
-        start();
-        System.out.println("Client: Client connected.");
+    public void setCurrentUser(User user){
+        currentUser = user;
+        System.out.println("Client: User set to " + currentUser.getName() + " with picture " + currentUser.getImage());
+    }
+
+    public User getCurrentUser(){
+        return currentUser;
     }
 
     public void run(){
