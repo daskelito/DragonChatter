@@ -41,8 +41,8 @@ public class Server extends Thread {
             map.put(user, client);
         }
 
-        public synchronized Client get(User user){
-            return get(user);
+        public synchronized ClientHandler get(User user){
+            return map.get(user);
         }
 
 

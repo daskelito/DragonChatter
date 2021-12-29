@@ -11,20 +11,17 @@ public class Client extends Thread{
     private User currentUser;
     private Scanner scanner;
     private ArrayList<String> contactList;
+    private ClientGUI clientGUI;
 
     public Client(int port) throws IOException {
         scanner = new Scanner(System.in);
-        gatherInfo();
         connect(port);
         contactList = new ArrayList<>();
-    }
-
-    public void gatherInfo(){
-        System.out.println("Enter name.");
-        String name = scanner.nextLine();
-        ImageIcon image = new ImageIcon("carrot.png");
-        currentUser = new User(name, image);
-        System.out.println("User created with name '" + name + "' and image 'carrot.png'");
+        clientGUI = new ClientGUI(this);
+        readContacts("contacts.txt");
+        for(String s: contactList){
+            clientGUI.addContact(s);
+        }
     }
 
     public ArrayList<String> getContactList(){
@@ -44,7 +41,6 @@ public class Client extends Thread{
     }
 
     public void run(){
-
         try {
             socket = new Socket("localhost", 888);
             oos = new ObjectOutputStream(socket.getOutputStream());
@@ -55,7 +51,6 @@ public class Client extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
 
         while(true){
             System.out.println("Client: enter a message");
@@ -104,9 +99,5 @@ public class Client extends Thread{
         }
     }
 
-
-    public void printContacts(){
-
-    }
 
 }

@@ -42,4 +42,8 @@ public class Message implements Serializable {
     public ImageIcon getImg() {
         return img;
     }
+
+    public Date getTimestamp(){
+        return timestamp;
+    }
 }
