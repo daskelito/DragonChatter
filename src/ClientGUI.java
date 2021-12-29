@@ -95,7 +95,7 @@ public class ClientGUI {
         loginframe.setLocationRelativeTo(null);
         JLabel usernameTitle = new JLabel("Username:");
         usernameTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        JTextField usernameField = new JTextField("Hitler", 10);
+        JTextField usernameField = new JTextField("Henrik", 10);
         usernameField.setFont(new Font("Arial", Font.BOLD, 18));
         JButton loginButton = new JButton("Log in");
         JButton setPicButton = new JButton("Set picture");
@@ -117,6 +117,7 @@ public class ClientGUI {
                 frame.setVisible(true);
                 System.out.println("Client logged in with username: " + username);
                 client.setCurrentUser(new User(username, userPicture));
+                client.login();
             }
         });
 
@@ -138,6 +139,14 @@ public class ClientGUI {
             }
         });
 
+        //Send button
+        sendButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+
         //Add contacts button
         addContactsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -150,7 +159,7 @@ public class ClientGUI {
                             }
                         }
                         if(willAdd) addContact(obox.getName());
-                        //TODO add contact to user model wise as well
+                        client.addContact(obox.getName());
                     }
                 }
                 contactsListPanel.repaint();

@@ -8,10 +8,10 @@ public class Message implements Serializable {
     String text;
     ImageIcon img;
     Date timestamp;
-    User sender;
-    ArrayList<User> receivers;
+    String sender;
+    ArrayList<String> receivers;
 
-    public Message(User sender, ArrayList<User> receivers, String text, ImageIcon img) {
+    public Message(String sender, ArrayList<String> receivers, String text, ImageIcon img) {
         this.sender = sender;
         this.receivers = receivers;
         this.text = text;
@@ -19,12 +19,18 @@ public class Message implements Serializable {
         this.timestamp = new Date(System.currentTimeMillis());
     }
 
-    public Message(String text) {
+    public Message(String sender, ArrayList<String> receivers,String text) {
+        this.sender = sender;
+        this.receivers = receivers;
         this.text = text;
+        this.timestamp = new Date(System.currentTimeMillis());
     }
 
-    public Message(ImageIcon img) {
+    public Message(String sender, ArrayList<String> receivers,ImageIcon img) {
+        this.sender = sender;
+        this.receivers = receivers;
         this.img = img;
+        this.timestamp = new Date(System.currentTimeMillis());
     }
 
     public void setText(String text) {

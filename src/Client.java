@@ -1,29 +1,27 @@
 import javax.swing.*;
 import java.io.*;
+import java.lang.reflect.Executable;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Client extends Thread{
+public class Client extends Thread {
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
     private User currentUser;
-    private Scanner scanner;
     private ArrayList<String> contactList;
     private ClientGUI clientGUI;
 
     public Client(int port) throws IOException {
-        scanner = new Scanner(System.in);
         connect(port);
         contactList = new ArrayList<>();
         clientGUI = new ClientGUI(this);
         readContacts("contacts.txt");
-        for(String s: contactList){
+        for (String s : contactList) {
             clientGUI.addContact(s);
         }
     }
-
 
 
     public void connect(int port) throws IOException {
@@ -31,27 +29,47 @@ public class Client extends Thread{
         System.out.println("Client: Client connected.");
     }
 
-    public ArrayList<String> getContactList(){
+    public void login() {
+
+    }
+
+    public ArrayList<String> getContactList() {
         return contactList;
+    }
+
+    public void addContact(String name) {
+        if(!contactList.contains(name)) {
+            contactList.add(name);
+            try {
+                FileWriter fw = new FileWriter("contacts.txt", true);
+                fw.write(name + "\n");
+                fw.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Client: Contact already exists: " + name);
+        }
+
     }
 
     public void readContacts(String path) throws FileNotFoundException {
         Scanner scanner = new Scanner(new File(path));
-        while(scanner.hasNextLine()){
+        while (scanner.hasNextLine()) {
             contactList.add(scanner.nextLine());
         }
     }
 
-    public void setCurrentUser(User user){
+    public void setCurrentUser(User user) {
         currentUser = user;
         System.out.println("Client: User set to " + currentUser.getName() + " with picture " + currentUser.getImage());
     }
 
-    public User getCurrentUser(){
+    public User getCurrentUser() {
         return currentUser;
     }
 
-    public void run(){
+    public void run() {
         try {
             socket = new Socket("localhost", 888);
             oos = new ObjectOutputStream(socket.getOutputStream());
@@ -63,11 +81,10 @@ public class Client extends Thread{
             e.printStackTrace();
         }
 
-        while(true){
-            System.out.println("Client: enter a message");
-            String text = scanner.nextLine();
-            Message msg = new Message(text);
-            System.out.println("Client: Message Entered");
+        while (true) {
+
+            Message msg = new Message("arne", new ArrayList<String>(), "hi");
+
             try {
                 oos.writeObject(msg);
                 oos.flush();
@@ -77,11 +94,12 @@ public class Client extends Thread{
         }
     }
 
+
     private class Listener extends Thread {
         private Socket socket;
         private ObjectInputStream ois;
 
-        private Listener(ObjectInputStream ois) throws IOException  {
+        private Listener(ObjectInputStream ois) throws IOException {
             this.ois = ois;
             start();
         }
@@ -91,11 +109,11 @@ public class Client extends Thread{
                 //ois = new ObjectInputStream(socket.getInputStream());
                 while (true) {
                     String request = (String) ois.readObject();
-                    if (request.startsWith("/server")){
+                    if (request.startsWith("/server")) {
                         String cmd = request.split("/")[2];
                         System.out.println("incoming command: " + cmd);
 
-                        if (cmd.equals("get_info")){
+                        if (cmd.equals("get_info")) {
                             System.out.println("IbnasdksdNFO");
                             oos.writeObject(currentUser);
                         }
