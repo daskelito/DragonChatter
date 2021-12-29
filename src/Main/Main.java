@@ -1,3 +1,8 @@
+package Main;
+
+import ClientPackage.Client;
+import ServerPackage.Server;
+
 import java.io.IOException;
 
 public class Main {

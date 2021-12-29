@@ -1,9 +1,7 @@
+package User;
+
 import javax.swing.*;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 public class User implements Serializable {
     private String name;

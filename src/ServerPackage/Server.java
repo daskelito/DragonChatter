@@ -1,62 +1,56 @@
+package ServerPackage;
+import Message.ChatMessage;
+import User.User;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
+import java.util.ArrayList;
 
-public class Server extends Thread {
-    private ServerSocket serverSocket;
-    private ClientList clientlist;
+
+public class Server {
+    private ArrayList<ClientHandler> clientlist;
+
 
     public Server(int port) throws IOException {
-        serverSocket = new ServerSocket(port);
-        this.start();
-        System.out.println("Server: Server started on port " + port);
-        clientlist = new ClientList();
+        clientlist = new ArrayList<>();
+        new Connection(port).start();
     }
 
-    public void run() {
-        while (true) {
-            try {
-                Socket socket = serverSocket.accept();
+
+    private class Connection extends Thread {
+        private int port;
+        public Connection(int port){
+            this.port = port;
+        }
+
+        public void run(){
+            try(ServerSocket serverSocket = new ServerSocket(port)) {
+                while(!Thread.interrupted()){
+                    Socket socket = serverSocket.accept();
+                    new ClientHandler(socket, clientlist.size());
+                }
                 System.out.println("Server: Client connection detected, initiating handler...");
-
-                ClientHandler client = new ClientHandler(socket);
-
             } catch (IOException e) {
                 System.err.println(e);
             }
         }
     }
 
-    private class ClientList {
-        private HashMap<User, ClientHandler> map;
-
-        public ClientList(){
-            map = new HashMap<User, ClientHandler>();
-        }
-
-        public synchronized void put(User user, ClientHandler client){
-            map.put(user, client);
-        }
-
-        public synchronized ClientHandler get(User user){
-            return map.get(user);
-        }
-
-    }
-
-
     private class ClientHandler extends Thread {
         private Socket socket;
         private ObjectInputStream ois;
         private ObjectOutputStream oos;
+        private int ID;
 
-        public ClientHandler(Socket socket) throws IOException {
+        public ClientHandler(Socket socket, int ID) throws IOException {
             this.socket = socket;
-            System.out.println("Server: Handler and socket established.");
+            this.ID = ID;
+            clientlist.add(this);
             start();
+            System.out.println("Server: Handler and socket established.");
+
         }
 
         public void run() {
@@ -68,28 +62,28 @@ public class Server extends Thread {
 
                 // TODO check if user already exists
                 User user = (User) ois.readObject();
-                clientlist.put(user, this);
+
                 System.out.println("Server: client connected");
 
                 while (true) {
-                    Message message = (Message) ois.readObject();
+                    ChatMessage message = (ChatMessage) ois.readObject();
                     System.out.println("Server: "+ message.getText());
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
             try {
-                onDisconnect();
+                disconnect();
             } catch (Exception e) {
                 System.out.println(e);
             }
         }
 
-        public void sendMessage(Message msg){
+        public void sendMessage(ChatMessage msg){
 
         }
 
-        public void onDisconnect(){
+        public void disconnect(){
             try {
                 socket.close();
                 System.out.println("Socket disconnected");

@@ -1,6 +1,10 @@
-import javax.swing.*;
+package ClientPackage;
+
+import Message.ChatMessage;
+import Message.Message;
+import User.User;
+
 import java.io.*;
-import java.lang.reflect.Executable;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -23,14 +27,18 @@ public class Client extends Thread {
         }
     }
 
-
     public void connect(int port) throws IOException {
-        start();
-        System.out.println("Client: Client connected.");
+        new Connection().start();
+        System.out.println("Client connected.");
     }
 
-    public void login() {
-
+    public void sendMessage(ArrayList<String> receivers, String message) {
+        Message messageToSend = new ChatMessage(currentUser.getName(), receivers, message);
+        try {
+            oos.writeObject(messageToSend);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<String> getContactList() {
@@ -38,7 +46,7 @@ public class Client extends Thread {
     }
 
     public void addContact(String name) {
-        if(!contactList.contains(name)) {
+        if (!contactList.contains(name)) {
             contactList.add(name);
             try {
                 FileWriter fw = new FileWriter("contacts.txt", true);
@@ -50,7 +58,6 @@ public class Client extends Thread {
         } else {
             System.out.println("Client: Contact already exists: " + name);
         }
-
     }
 
     public void readContacts(String path) throws FileNotFoundException {
@@ -62,71 +69,61 @@ public class Client extends Thread {
 
     public void setCurrentUser(User user) {
         currentUser = user;
-        System.out.println("Client: User set to " + currentUser.getName() + " with picture " + currentUser.getImage());
+        System.out.println("Client:User set to " + currentUser.getName() + " with picture " + currentUser.getImage());
     }
 
     public User getCurrentUser() {
         return currentUser;
     }
 
-    public void run() {
-        try {
-            socket = new Socket("localhost", 888);
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            ois = new ObjectInputStream(socket.getInputStream());
 
-            new Listener(ois);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        while (true) {
-
-            Message msg = new Message("arne", new ArrayList<String>(), "hi");
-
+    private class Connection extends Thread {
+        public void run() {
             try {
-                oos.writeObject(msg);
-                oos.flush();
-            } catch (IOException e) {
+                Socket socket = new Socket("localhost", 888);
+                oos = new ObjectOutputStream(socket.getOutputStream());
+                ois = new ObjectInputStream(socket.getInputStream());
+                new Listener().start();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }
     }
 
-
     private class Listener extends Thread {
-        private Socket socket;
-        private ObjectInputStream ois;
-
-        private Listener(ObjectInputStream ois) throws IOException {
-            this.ois = ois;
-            start();
-        }
-
         public void run() {
+
+             /*
             try {
-                //ois = new ObjectInputStream(socket.getInputStream());
                 while (true) {
+
+                    //ChatMessage message = (ChatMessage) ois.readObject();
+
+
+
                     String request = (String) ois.readObject();
                     if (request.startsWith("/server")) {
                         String cmd = request.split("/")[2];
                         System.out.println("incoming command: " + cmd);
 
                         if (cmd.equals("get_info")) {
-                            System.out.println("IbnasdksdNFO");
+                            System.out.println("-INFO-");
                             oos.writeObject(currentUser);
                         }
 
                         // do stuff with request
                         //if (request.equals(""))
-                    }
+
+
                 }
+
+
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
+              */
+
         }
     }
-
-
 }

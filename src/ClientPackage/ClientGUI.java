@@ -1,9 +1,10 @@
-import jdk.jshell.execution.JdiExecutionControl;
+package ClientPackage;
 
-import javax.accessibility.AccessibleContext;
+import ClientPackage.Client;
+import User.User;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -85,7 +86,6 @@ public class ClientGUI {
         addOnline("example5");
 
 
-
         //login frame
         JFrame loginframe = new JFrame("Login");
         loginframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -113,11 +113,15 @@ public class ClientGUI {
                 frame.setVisible(false);
                 username = usernameField.getText();
                 loginframe.setVisible(false);
-                frame.setTitle("DragonChatter - User: " + username);
+                frame.setTitle("DragonChatter - User.User: " + username);
                 frame.setVisible(true);
                 System.out.println("Client logged in with username: " + username);
                 client.setCurrentUser(new User(username, userPicture));
-                client.login();
+                try {
+                    client.connect(888);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
             }
         });
 
@@ -182,7 +186,7 @@ public class ClientGUI {
     public void addOnline(String title) {
         JCheckBox newBox = new JCheckBox(title);
         newBox.setName(title);
-        newBox.setSelected(true);
+        //newBox.setSelected(true);
         onlineList.add(newBox);
         onlineListPanel.add(newBox);
     }
