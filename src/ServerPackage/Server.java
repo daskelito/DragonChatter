@@ -30,8 +30,9 @@ public class Server {
                 while(!Thread.interrupted()){
                     Socket socket = serverSocket.accept();
                     new ClientHandler(socket, clientlist.size());
+                    System.out.println("Server: client with ID " + clientlist.size() + " added.");
                 }
-                System.out.println("Server: Client connection detected, initiating handler...");
+
             } catch (IOException e) {
                 System.err.println(e);
             }
@@ -86,10 +87,10 @@ public class Server {
         public void disconnect(){
             try {
                 socket.close();
-                System.out.println("Socket disconnected");
+                System.out.println("Server: Socket disconnected");
             }
             catch (IOException e) {
-                System.out.println("Error disconnecting socket.");
+                System.out.println("Server: Error disconnecting socket.");
                 System.out.println(e);
             }
 

@@ -10,7 +10,4 @@ Flula Borg
 Eminem
 Ali G
 example1
-example2
-example3
 example4
-example5

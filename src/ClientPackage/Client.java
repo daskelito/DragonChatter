@@ -18,7 +18,6 @@ public class Client extends Thread {
     private ClientGUI clientGUI;
 
     public Client(int port) throws IOException {
-        connect(port);
         contactList = new ArrayList<>();
         clientGUI = new ClientGUI(this);
         readContacts("contacts.txt");
@@ -29,7 +28,7 @@ public class Client extends Thread {
 
     public void connect(int port) throws IOException {
         new Connection().start();
-        System.out.println("Client connected.");
+        System.out.println("Client: connected.");
     }
 
     public void sendMessage(ArrayList<String> receivers, String message) {
@@ -69,7 +68,7 @@ public class Client extends Thread {
 
     public void setCurrentUser(User user) {
         currentUser = user;
-        System.out.println("Client:User set to " + currentUser.getName() + " with picture " + currentUser.getImage());
+        System.out.println("Client: User set to " + currentUser.getName());
     }
 
     public User getCurrentUser() {

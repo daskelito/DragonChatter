@@ -1,6 +1,7 @@
 package ClientPackage;
 
 import ClientPackage.Client;
+import Message.Message;
 import User.User;
 
 import javax.imageio.ImageIO;
@@ -23,12 +24,14 @@ public class ClientGUI {
     private ArrayList<JCheckBox> onlineList;
     private ArrayList<JCheckBox> contactList;
     private Client client;
+    private boolean isPicAttached;
 
     public ClientGUI(Client client) {
         this.client = client;
         onlineList = new ArrayList<>();
         contactList = new ArrayList<>();
         userPicture = new ImageIcon("C:\\Users\\Dragon\\IdeaProjects\\DragonChatter\\default.png");
+        isPicAttached = false;
 
         frame = new JFrame("DragonChatter");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -115,7 +118,7 @@ public class ClientGUI {
                 loginframe.setVisible(false);
                 frame.setTitle("DragonChatter - User.User: " + username);
                 frame.setVisible(true);
-                System.out.println("Client logged in with username: " + username);
+                System.out.println("Client: Client logged in with username: " + username);
                 client.setCurrentUser(new User(username, userPicture));
                 try {
                     client.connect(888);
@@ -146,7 +149,11 @@ public class ClientGUI {
         //Send button
         sendButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                if (isPicAttached) {
 
+                } else {
+                    Message message = new ChatMessage(currentuser, )
+                }
             }
         });
 
@@ -154,15 +161,15 @@ public class ClientGUI {
         //Add contacts button
         addContactsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                for(JCheckBox obox : onlineList){
-                    if(obox.isSelected()){
+                for (JCheckBox obox : onlineList) {
+                    if (obox.isSelected()) {
                         boolean willAdd = true;
-                        for(JCheckBox cbox : contactList){
-                            if(obox.getName() == cbox.getName()){
+                        for (JCheckBox cbox : contactList) {
+                            if (obox.getName() == cbox.getName()) {
                                 willAdd = false;
                             }
                         }
-                        if(willAdd) addContact(obox.getName());
+                        if (willAdd) addContact(obox.getName());
                         client.addContact(obox.getName());
                     }
                 }
@@ -199,18 +206,13 @@ public class ClientGUI {
         }
     }
 
-    public ArrayList<String> getListofOnlineReceivers() {
+    public ArrayList<String> getListofReceivers() {
         ArrayList<String> receivers = new ArrayList<>();
         for (JCheckBox b : onlineList) {
             if (b.isSelected()) {
                 receivers.add(b.getName());
             }
         }
-        return receivers;
-    }
-
-    public ArrayList<String> getListofContactReceivers() {
-        ArrayList<String> receivers = new ArrayList<>();
         for (JCheckBox b : contactList) {
             if (b.isSelected()) {
                 receivers.add(b.getName());
@@ -219,11 +221,12 @@ public class ClientGUI {
         return receivers;
     }
 
-    public String getUsername(){
+
+    public String getUsername() {
         return username;
     }
 
-    public ImageIcon getUserPic(){
+    public ImageIcon getUserPic() {
         return userPicture;
     }
 
