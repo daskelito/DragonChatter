@@ -1,9 +1,9 @@
 package ClientPackage;
-
-import Message.ChatMessage;
 import Message.Message;
+import Message.ChatMessage;
+import Message.InfoMessage;
 import User.User;
-
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -31,8 +31,26 @@ public class Client extends Thread {
         System.out.println("Client: connected.");
     }
 
-    public void sendMessage(ArrayList<String> receivers, String message) {
+    public void sendInfoMessage(String receiver, String text){
+        InfoMessage infomsg = new InfoMessage(receiver, text);
+        try {
+            oos.writeObject(infomsg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendChatMessage(ArrayList<String> receivers, String message) {
         Message messageToSend = new ChatMessage(currentUser.getName(), receivers, message);
+        try {
+            oos.writeObject(messageToSend);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendPicMessage(ArrayList<String> receivers, String message, ImageIcon picture) {
+        Message messageToSend = new ChatMessage(currentUser.getName(), receivers, message, picture);
         try {
             oos.writeObject(messageToSend);
         } catch (Exception e) {
@@ -82,7 +100,11 @@ public class Client extends Thread {
                 Socket socket = new Socket("localhost", 888);
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 ois = new ObjectInputStream(socket.getInputStream());
+                sendInfoMessage("server", "online");
                 new Listener().start();
+                while (!Thread.interrupted()) {
+                    //to keep connection alive
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -92,37 +114,20 @@ public class Client extends Thread {
 
     private class Listener extends Thread {
         public void run() {
-
-             /*
             try {
                 while (true) {
+                    Message message = (Message) ois.readObject();
+                    if(message instanceof ChatMessage){
+                        clientGUI.displayMessage((ChatMessage) message);
+                    } else if (message instanceof InfoMessage){
 
-                    //ChatMessage message = (ChatMessage) ois.readObject();
-
-
-
-                    String request = (String) ois.readObject();
-                    if (request.startsWith("/server")) {
-                        String cmd = request.split("/")[2];
-                        System.out.println("incoming command: " + cmd);
-
-                        if (cmd.equals("get_info")) {
-                            System.out.println("-INFO-");
-                            oos.writeObject(currentUser);
-                        }
-
-                        // do stuff with request
-                        //if (request.equals(""))
-
+                    }
 
                 }
-
-
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
-              */
-
         }
     }
+
 }

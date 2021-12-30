@@ -7,25 +7,25 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ChatMessage extends Message implements Serializable {
-    String text;
-    ImageIcon img;
-    Date timestamp;
-    String sender;
-    ArrayList<String> receivers;
+    private ImageIcon img;
+    private String sender;
+    private ArrayList<String> receivers;
 
     public ChatMessage(String sender, ArrayList<String> receivers, String text, ImageIcon img) {
         this.sender = sender;
         this.receivers = receivers;
-        this.text = text;
         this.img = img;
-        this.timestamp = new Date(System.currentTimeMillis());
+        setText(text);
     }
 
     public ChatMessage(String sender, ArrayList<String> receivers, String text) {
         this.sender = sender;
         this.receivers = receivers;
-        this.text = text;
-        this.timestamp = new Date(System.currentTimeMillis());
+        setText(text);
+    }
+
+    public String getSender(){
+        return sender;
     }
 
     public void setImg(ImageIcon img) {
@@ -36,7 +36,4 @@ public class ChatMessage extends Message implements Serializable {
         return img;
     }
 
-    public Date getTimestamp(){
-        return timestamp;
-    }
 }

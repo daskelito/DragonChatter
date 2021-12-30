@@ -2,8 +2,8 @@ package ClientPackage;
 
 import ClientPackage.Client;
 import Message.Message;
+import Message.ChatMessage;
 import User.User;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +18,7 @@ public class ClientGUI {
     private JPanel rightPanel;
     private JPanel onlineListPanel;
     private JPanel contactsListPanel;
+    private JTextArea textArea1;
     private ImageIcon userPicture;
     private JLabel userPic;
     private String username;
@@ -25,6 +26,7 @@ public class ClientGUI {
     private ArrayList<JCheckBox> contactList;
     private Client client;
     private boolean isPicAttached;
+    private ImageIcon attachedPic;
 
     public ClientGUI(Client client) {
         this.client = client;
@@ -46,8 +48,7 @@ public class ClientGUI {
         frame.add(rightPanel, BorderLayout.LINE_END);
 
         //Text area for chat history
-        JTextArea textArea1 = new JTextArea(25, 40);
-        textArea1.append("chat history here");
+        textArea1 = new JTextArea(25, 40);
         textArea1.setLineWrap(true);
         textArea1.setEditable(false);
         leftPanel.add(textArea1, BorderLayout.PAGE_START);
@@ -150,13 +151,32 @@ public class ClientGUI {
         sendButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (isPicAttached) {
-
+                    client.sendPicMessage(getListofReceivers(), textArea2.getText(), attachedPic);
+                    isPicAttached = false;
                 } else {
-                    Message message = new ChatMessage(currentuser, )
+                    client.sendChatMessage(getListofReceivers(), textArea2.getText());
                 }
+                textArea2.setText("");
             }
         });
 
+
+        //Attach picture button
+        addPicButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser("C:/Users/Dragon/IdeaProjects/DragonChatter");
+                int result = fileChooser.showOpenDialog(fileChooser);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    try {
+                        attachedPic = new ImageIcon(ImageIO.read(selectedFile));
+                        isPicAttached = true;
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+                }
+            }
+        });
 
         //Add contacts button
         addContactsButton.addActionListener(new ActionListener() {
@@ -180,6 +200,19 @@ public class ClientGUI {
 
     }
 
+    public void displayMessage(ChatMessage message){
+        String textToDisplay = "";
+        textToDisplay += message.getTimestamp().toString();
+        textToDisplay += " - ";
+        textToDisplay += message.getSender();
+        textToDisplay += ": ";
+        textToDisplay += message.getText();
+        textToDisplay += "\n";
+        textArea1.append(textToDisplay);
+
+       //SwingUtilities.updateComponentTreeUI(frame);
+    }
+
     //TODO check for uniqueness
     public void addContact(String title) {
         JCheckBox newBox = new JCheckBox(title);
@@ -193,7 +226,6 @@ public class ClientGUI {
     public void addOnline(String title) {
         JCheckBox newBox = new JCheckBox(title);
         newBox.setName(title);
-        //newBox.setSelected(true);
         onlineList.add(newBox);
         onlineListPanel.add(newBox);
     }
@@ -230,5 +262,12 @@ public class ClientGUI {
         return userPicture;
     }
 
+    public static void main(String[] args) throws IOException {
+        ClientGUI gui = new ClientGUI(new Client(888));
+        ChatMessage msg = new ChatMessage("person 1", new ArrayList<String >(), "hello");
+        ChatMessage msg2 = new ChatMessage("person 2", new ArrayList<String >(), "hi");
+        gui.displayMessage(msg);
+        gui.displayMessage(msg2);
+    }
 
 }

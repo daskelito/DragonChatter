@@ -1,6 +1,7 @@
 package Main;
 
 import ClientPackage.Client;
+import ClientPackage.ClientGUI;
 import ServerPackage.Server;
 
 import java.io.IOException;

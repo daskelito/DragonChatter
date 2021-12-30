@@ -1,6 +1,8 @@
 package ServerPackage;
+
+import Message.Message;
 import Message.ChatMessage;
-import User.User;
+import Message.InfoMessage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -21,18 +23,18 @@ public class Server {
 
     private class Connection extends Thread {
         private int port;
-        public Connection(int port){
+
+        public Connection(int port) {
             this.port = port;
         }
 
-        public void run(){
-            try(ServerSocket serverSocket = new ServerSocket(port)) {
-                while(!Thread.interrupted()){
+        public void run() {
+            try (ServerSocket serverSocket = new ServerSocket(port)) {
+                while (!Thread.interrupted()) {
                     Socket socket = serverSocket.accept();
                     new ClientHandler(socket, clientlist.size());
                     System.out.println("Server: client with ID " + clientlist.size() + " added.");
                 }
-
             } catch (IOException e) {
                 System.err.println(e);
             }
@@ -51,24 +53,24 @@ public class Server {
             clientlist.add(this);
             start();
             System.out.println("Server: Handler and socket established.");
-
         }
 
         public void run() {
             try {
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 ois = new ObjectInputStream(socket.getInputStream());
-
-                oos.writeObject("/server/get_info");
-
-                // TODO check if user already exists
-                User user = (User) ois.readObject();
-
                 System.out.println("Server: client connected");
 
                 while (true) {
-                    ChatMessage message = (ChatMessage) ois.readObject();
-                    System.out.println("Server: "+ message.getText());
+                    Message message = (Message) ois.readObject();
+                    if (message instanceof ChatMessage) {
+
+                    } else if (message instanceof InfoMessage) {
+                        InfoMessage msg = (InfoMessage) message;
+                        if(msg.getText().equals("online")) {
+                            System.out.println("Server: message received: '" + msg.getText() + "'");
+                        }
+                    }
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -80,16 +82,11 @@ public class Server {
             }
         }
 
-        public void sendMessage(ChatMessage msg){
-
-        }
-
-        public void disconnect(){
+        public void disconnect() {
             try {
                 socket.close();
                 System.out.println("Server: Socket disconnected");
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 System.out.println("Server: Error disconnecting socket.");
                 System.out.println(e);
             }
